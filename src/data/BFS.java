@@ -2,7 +2,7 @@ package data;
 
 import java.util.ArrayList;
 
-import model.Node;
+import model.INode;
 import model.Path;
 
 public class BFS {
@@ -18,7 +18,7 @@ public class BFS {
         queue = null;
     }
 
-    private static <T extends Node> void init(Graph<T> graph) {
+    private static <T extends INode> void init(Graph<T> graph) {
         int numVertex = graph.getNumVertex();
 
         accessed = new ArrayList<>(numVertex);
@@ -31,23 +31,23 @@ public class BFS {
         }
     }
 
-    public static <T extends Node> void search(Graph<T> graph) {
+    public static <T extends INode> void search(Graph<T> graph) {
         clear();
         init(graph);
 
         while (!notAccessed.isEmpty()) {
-            int vertice = notAccessed.get(0);
-            queue.add(vertice);
-            accessed.add(vertice);
+            int vertex = notAccessed.get(0);
+            queue.add(vertex);
+            accessed.add(vertex);
             notAccessed.remove(0);
 
             while (!queue.isEmpty()) {
-                int currentVertice = queue.get(0);
+                int currentVertex = queue.get(0);
                 queue.remove(0);
 
-                for (T neighbor : graph.getNeighbors(currentVertice)) {
+                for (T neighbor : graph.getNeighbors(currentVertex)) {
                     if (!accessed.contains(neighbor.getId())) {
-                        pathsUsed.add(new Path(currentVertice, neighbor.getId()));
+                        pathsUsed.add(new Path(currentVertex, neighbor.getId()));
                         accessed.add(neighbor.getId());
                         notAccessed.remove(notAccessed.indexOf(neighbor.getId()));
                         queue.add(neighbor.getId());
@@ -62,8 +62,8 @@ public class BFS {
         }
 
         System.out.println("\nAccessed vertexes:");
-        for (int vertice : accessed) {
-            System.out.println(vertice);
+        for (int vertex : accessed) {
+            System.out.println(vertex);
         }
     }
 }

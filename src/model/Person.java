@@ -1,10 +1,11 @@
 package model;
 
-public class Person extends Node {
+public class Person implements INode {
+    private int id;
     private String name;
 
     public Person(int id, String name) {
-        super(id);
+        this.id = id;
         this.name = name;
     }
 
@@ -17,12 +18,29 @@ public class Person extends Node {
     }
 
     @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
     public int hashCode() {
-        return super.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Person other = (Person) obj;
+        if (id != other.id)
+            return false;
+        return true;
     }
 }

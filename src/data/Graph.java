@@ -3,9 +3,9 @@ package data;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import model.Node;
+import model.INode;
 
-public class Graph<T extends Node> {
+public class Graph<T extends INode> {
     private final HashMap<Integer, LinkedList<T>> graph;
 
     public Graph() {
