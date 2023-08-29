@@ -1,69 +1,63 @@
 package data;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Map.Entry;
 
 import model.INode;
 import model.Path;
 
 public class BFS {
-    private static ArrayList<Integer> accessed;
-    private static ArrayList<Integer> notAccessed;
-    private static ArrayList<Path> pathsUsed;
-    private static ArrayList<Integer> queue;
-
-    private static void clear() {
-        accessed = null;
-        notAccessed = null;
-        pathsUsed = null;
-        queue = null;
-    }
-
-    private static <T extends INode> void init(Graph<T> graph) {
+    public static <T extends INode> List<Path<T>> search(Graph<T> graph) {
         int numVertex = graph.getNumVertex();
 
-        accessed = new ArrayList<>(numVertex);
-        notAccessed = new ArrayList<>(numVertex);
-        pathsUsed = new ArrayList<>(numVertex * 2);
-        queue = new ArrayList<>(numVertex);
+        List<T> notAccessed = new ArrayList<>(numVertex);
+        List<Path<T>> pathsUsed = new ArrayList<>(numVertex * 2);
+        Queue<T> queue = new ArrayDeque<>(numVertex);
 
-        for (int vertex : graph.getGraph().keySet()) {
-            notAccessed.add(vertex);
+        // Add all vertexes to the list of not accessed vertexes
+        for (Entry<T, List<T>> vertex : graph.getGraph().entrySet()) {
+            notAccessed.add(vertex.getKey());
         }
-    }
 
-    public static <T extends INode> void search(Graph<T> graph) {
-        clear();
-        init(graph);
-
+        // While there are vertexes which were not accessed yet
         while (!notAccessed.isEmpty()) {
-            int vertex = notAccessed.get(0);
+            // Get the first vertex which was not accessed yet
+            T vertex = notAccessed.get(0);
+
+            // Add the vertex to the queue and mark it as accessed by
+            // removing it from the list of not accessed vertexes
             queue.add(vertex);
-            accessed.add(vertex);
             notAccessed.remove(0);
 
+            // While there are vertexes in the queue
             while (!queue.isEmpty()) {
-                int currentVertex = queue.get(0);
-                queue.remove(0);
+                // Get the first vertex in the queue
+                T currentVertex = queue.remove();
 
+                // For each neighbor of the current vertex
                 for (T neighbor : graph.getNeighbors(currentVertex)) {
-                    if (!accessed.contains(neighbor.getId())) {
-                        pathsUsed.add(new Path(currentVertex, neighbor.getId()));
-                        accessed.add(neighbor.getId());
-                        notAccessed.remove(notAccessed.indexOf(neighbor.getId()));
-                        queue.add(neighbor.getId());
+                    // If the neighbor was not accessed yet
+                    if (notAccessed.contains(neighbor)) {
+                        // Create a path from the current vertex to the neighbor
+                        Path<T> path = new Path<>(currentVertex, neighbor);
+
+                        // Add the path to the list of paths used
+                        pathsUsed.add(path);
+
+                        // Mark the neighbor as accessed by removing
+                        // it from the list of not accessed vertexes
+                        notAccessed.remove(notAccessed.indexOf(neighbor));
+
+                        // Add the neighbor to the queue
+                        queue.add(neighbor);
                     }
                 }
             }
         }
 
-        System.out.println("Paths used:");
-        for (Path path : pathsUsed) {
-            System.out.println(path);
-        }
-
-        System.out.println("\nAccessed vertexes:");
-        for (int vertex : accessed) {
-            System.out.println(vertex);
-        }
+        return pathsUsed;
     }
 }

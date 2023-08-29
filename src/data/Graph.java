@@ -2,11 +2,13 @@ package data;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import model.INode;
 
 public class Graph<T extends INode> {
-    private final HashMap<Integer, LinkedList<T>> graph;
+    private final Map<T, List<T>> graph;
 
     public Graph() {
         graph = new HashMap<>();
@@ -17,12 +19,12 @@ public class Graph<T extends INode> {
     }
 
     public void addVertex(T vertex) {
-        graph.put(vertex.getId(), new LinkedList<>());
+        graph.put(vertex, new LinkedList<>());
     }
 
     public void addEdge(T src, T dest) {
-        LinkedList<T> srcList = graph.get(src.getId());
-        LinkedList<T> destList = graph.get(dest.getId());
+        List<T> srcList = graph.get(src);
+        List<T> destList = graph.get(dest);
 
         if (srcList == null || destList == null) {
             throw new IllegalArgumentException("Vertex does not exist");
@@ -32,31 +34,21 @@ public class Graph<T extends INode> {
         destList.add(src);
     }
 
+    public List<T> getNeighbors(T vertex) {
+        List<T> neighbors = graph.get(vertex);
+
+        if (neighbors == null) {
+            throw new IllegalArgumentException("Vertex does not exist");
+        }
+
+        return neighbors;
+    }
+
+    public Map<T, List<T>> getGraph() {
+        return graph;
+    }
+
     public int getNumVertex() {
         return graph.size();
-    }
-
-    public LinkedList<T> getNeighbors(T vertex) {
-        LinkedList<T> neighbors = graph.get(vertex.getId());
-
-        if (neighbors == null) {
-            throw new IllegalArgumentException("Vertex does not exist");
-        }
-
-        return neighbors;
-    }
-
-    public LinkedList<T> getNeighbors(int vertexId) {
-        LinkedList<T> neighbors = graph.get(vertexId);
-
-        if (neighbors == null) {
-            throw new IllegalArgumentException("Vertex does not exist");
-        }
-
-        return neighbors;
-    }
-
-    public HashMap<Integer, LinkedList<T>> getGraph() {
-        return graph;
     }
 }
